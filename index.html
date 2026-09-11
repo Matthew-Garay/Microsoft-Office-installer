@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="us-en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -118,6 +118,16 @@ a:hover { color: #58a6ff; text-decoration: underline; }
 .flag-hi::after {
   content: ""; position: absolute; left: 6px; top: 3px;
   width: 4px; height: 4px; border-radius: 50%; background: #000080;
+}
+
+.flag-us { background: #b22234; position: relative; }
+.flag-us::after {
+  content: ""; position: absolute; left: 0; top: 0;
+  width: 8px; height: 6px; background: #3c3b6e;
+  box-shadow:
+    1px 2px 0 0 #ffffff, 3px 2px 0 0 #ffffff, 5px 2px 0 0 #ffffff, 7px 2px 0 0 #ffffff,
+    2px 4px 0 0 #ffffff, 4px 4px 0 0 #ffffff, 6px 4px 0 0 #ffffff,
+    1px 6px 0 0 #ffffff, 3px 6px 0 0 #ffffff, 5px 6px 0 0 #ffffff;
 }
 
 .tema-btn {
@@ -383,7 +393,7 @@ h2 {
 <body>
 <nav class="nav">
   <div class="marca">Microsoft Office Installer <span>· Matthew Garay</span></div>
-  <button class="idioma-btn" id="btn-idioma" onclick="cambiarIdioma()"><span class="bandera mini-flag flag-gb"></span> <span id="btn-idioma-texto">EN</span></button>
+  <button class="idioma-btn" id="btn-idioma" onclick="cambiarIdioma()"><span class="bandera mini-flag flag-us"></span> <span id="btn-idioma-texto">EN-US</span></button>
   <span class="acciones">
     <button class="tema-btn" id="btn-tema" onclick="cambiarTema()" title="Modo claro / obscuro">☀️</button>
   </span>
@@ -448,9 +458,9 @@ h2 {
 
 <script>
 /* ---- Estado ---- */
-var idioma = "en";
+var idioma = "us-en";
 var tabActual = "gui";
-var cicloIdiomas = ["en", "es", "fr", "de", "zh", "hi"];
+var cicloIdiomas = ["us-en", "en", "es", "fr", "de", "zh", "hi"];
 
 var urls = {
   gui: "irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-gui.ps1 | iex",
@@ -458,6 +468,27 @@ var urls = {
 };
 
 var textos = {
+  "us-en": {
+    subtitulo: "Install Microsoft Office on Windows with a single PowerShell command.",
+    tabGui: "Window / GUI",
+    tabCli: "Console / CLI",
+    copiar: "Copy",
+    copiado: "Copied",
+    hVersiones: "Supported versions",
+    hRequisitos: "Requirements",
+    hUso: "How to use",
+    uso1: "Copy one of the two command lines above, paste it into PowerShell as administrator and you are done. The installer downloads the Office Deployment Tool and lets you choose which version to install.",
+    uso2: "Choosing \"Console / CLI\" will install the command-line version, same result but without a graphical interface.",
+    rSoB: "System", rSo: "Windows 7 or higher (32 / 64 bit)",
+    rPsB: "PowerShell", rPs: "Version 5.0 or higher",
+    rNetB: ".NET Framework", rNet: "Version 4.5 or higher",
+    rPerB: "Permissions", rPer: "Run as administrator",
+    soDetectando: "Windows · Detecting architecture...",
+    soBits: function (bits) { return "Windows " + bits + " bit"; },
+    pie: "source code on GitHub",
+    idiomaBtn: "EN-US",
+    flagClass: "flag-us"
+  },
   en: {
     subtitulo: "Install Microsoft Office on Windows with a single PowerShell command.",
     tabGui: "Window / GUI",
@@ -693,7 +724,7 @@ function aplicarTema(tema) {
   var claro = tema === "claro";
   document.body.classList.toggle("claro", claro);
   document.getElementById("btn-tema").textContent = claro ? "🌙" : "☀️";
-  document.getElementById("btn-tema").title = claro ? "Modo obscuro" : "Modo claro";
+  document.getElementById("btn-tema").title = claro ? "Modo obscuro / Dark mode" : "Modo claro / Light mode";
   try { localStorage.setItem("tema", tema); } catch (e) {}
 }
 
@@ -704,7 +735,7 @@ function cambiarTema() {
 (function temaInicial() {
   var guardado = null;
   try { guardado = localStorage.getItem("tema"); } catch (e) {}
-  aplicarTema(guardado || "obscuro");
+  aplicarTema(guardado || "claro");
 })();
 </script>
 </body>
