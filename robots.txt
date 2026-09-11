@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://matthew-garay.github.io/MSOI/sitemap.xml
