@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Office Installer - instalar Office en Windows con un comando</title>
+<meta name="description" content="Herramienta para instalar Microsoft Office (LTSC 2024, 2021, 2019, 2016 y 2013) en Windows desde PowerShell con un solo comando. Hecha por Matthew Garay.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://matthew-garay.github.io/Microsoft-Office-installer/">
+<meta property="og:title" content="Office Installer">
+<meta property="og:description" content="Instala Office en Windows con un solo comando de PowerShell.">
+<meta property="og:url" content="https://matthew-garay.github.io/Microsoft-Office-installer/">
+<style>
+/* estilos simples, lo menos posible */
+body {
+  background:#101418;
+  color:#c9d1d9;
+  font-family:Verdana, Arial, sans-serif;
+  font-size:14px;
+  margin:0;
+  padding:40px 20px;
+  line-height:1.7;
+}
+.caja { max-width:640px; margin:0 auto; }
+h1 { color:#fff; font-size:26px; margin:0 0 6px 0; }
+h1 small { color:#7d8590; font-size:13px; font-weight:normal; display:block; margin-top:4px; }
+p.intro { color:#8b949e; margin:14px 0 24px 0; }
+a { color:#58a6ff; text-decoration:none; }
+a:hover { text-decoration:underline; }
+.caja-comando {
+  background:#0b0f14;
+  border:1px solid #21262d;
+  border-radius:6px;
+  padding:10px;
+  margin-bottom:6px;
+  font-family:Consolas, monospace;
+  font-size:13px;
+  color:#7ee787;
+  word-break:break-all;
+}
+.boton {
+  background:#238636;
+  color:#fff;
+  border:0;
+  border-radius:6px;
+  padding:7px 16px;
+  cursor:pointer;
+  font-size:13px;
+  margin:0 0 14px 0;
+  float:right;
+}
+.boton:hover { background:#2ea043; }
+.boton.idioma { background:#21262d; float:none; margin:0 0 14px 0; }
+ul { color:#8b949e; padding-left:20px; }
+ul b { color:#fff; }
+.nota {
+  border-left:3px solid #d29922;
+  padding:6px 12px;
+  margin:20px 0;
+  color:#d29922;
+  font-size:13px;
+}
+.pie {
+  margin-top:26px;
+  padding-top:12px;
+  border-top:1px solid #21262d;
+  color:#7d8590;
+  font-size:12px;
+}
+</style>
+</head>
+<body>
+<div class="caja">
+
+  <button class="boton idioma" onclick="cambiarIdioma()" id="btnIdioma">English</button>
+
+  <h1 id="titulo">Office Installer
+    <small id="autor">por Matthew Garay · github.com/Matthew-Garay</small>
+  </h1>
+
+  <p class="intro" id="intro">Instala Office en Windows con un solo comando de PowerShell.
+  Se descarga el Office Deployment Tool oficial de Microsoft y la configuración se arma
+  sola. Copia una de las dos líneas de abajo, pegala en PowerShell como administrador y listo.</p>
+
+  <div class="caja-comando" id="cmd1">irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-gui.ps1 | iex</div>
+  <button class="boton" onclick="copiar(1)"><span id="bt1">Copiar</span></button>
+  <div style="clear:both"></div>
+
+  <div class="caja-comando" id="cmd2">irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-cli.ps1 | iex</div>
+  <button class="boton" onclick="copiar(2)"><span id="bt2">Copiar</span></button>
+  <div style="clear:both"></div>
+
+  <ul>
+    <li id="li1">Funciona con Office LTSC 2024 / 2021 y Professional Plus 2019 / 2016 / 2013</li>
+    <li id="li2">32 y 64 bits, Project y Visio opcionales, idioma a elegir</li>
+    <li id="li3">Se puede instalar app por app (Word, Excel, etc.)</li>
+    <li id="li4">Interfaz con ventana (gui) o modo consola (cli), tú eliges</li>
+  </ul>
+
+  <div class="nota" id="nota">Ojo: necesitas Windows 10 u 11 y ejecutar PowerShell como administrador.</div>
+
+  <div class="pie" id="pie">
+    Office Installer · 2026 ·
+    <a href="https://github.com/Matthew-Garay/Microsoft-Office-installer">código fuente en GitHub</a>
+  </div>
+
+</div>
+
+<script>
+// idiomas: el sitio abre en español, el boton rota entre todos
+var idiomas = [
+  { cod:"es", bt:"Copiar", copiado:"Copiado", btn:"English",
+    intro:"Instala Office en Windows con un solo comando de PowerShell. Se descarga el Office Deployment Tool oficial de Microsoft y la configuración se arma sola. Copia una de las dos líneas de abajo, pegala en PowerShell como administrador y listo.",
+    li:["Funciona con Office LTSC 2024 / 2021 y Professional Plus 2019 / 2016 / 2013",
+        "32 y 64 bits, Project y Visio opcionales, idioma a elegir",
+        "Se puede instalar app por app (Word, Excel, etc.)",
+        "Interfaz con ventana (gui) o modo consola (cli), tú eliges"],
+    nota:"Ojo: necesitas Windows 10 u 11 y ejecutar PowerShell como administrador." },
+  { cod:"en", bt:"Copy", copiado:"Copied!", btn:"Français",
+    intro:"Install Office on Windows with a single PowerShell command. It downloads Microsoft's official Office Deployment Tool and builds the configuration for you. Copy one of the two lines below, paste it in PowerShell as admin, done.",
+    li:["Works with Office LTSC 2024 / 2021 and Professional Plus 2019 / 2016 / 2013",
+        "32 and 64 bit, optional Project and Visio, language of your choice",
+        "You can pick apps one by one (Word, Excel, etc.)",
+        "Window interface (gui) or console mode (cli), your choice"],
+    nota:"Note: requires Windows 10 or 11, run PowerShell as administrator." },
+  { cod:"fr", bt:"Copier", copiado:"Copié !", btn:"Português",
+    intro:"Installez Office sous Windows avec une seule commande PowerShell. L'outil officiel Office Deployment Tool de Microsoft est téléchargé et la configuration est générée pour vous. Copiez l'une des deux lignes ci-dessous, collez-la dans PowerShell en tant qu'administrateur, c'est tout.",
+    li:["Compatible avec Office LTSC 2024 / 2021 et Professional Plus 2019 / 2016 / 2013",
+        "32 et 64 bits, Project et Visio optionnels, langue au choix",
+        "Installation application par application (Word, Excel, etc.)",
+        "Interface graphique (gui) ou mode console (cli), à vous de choisir"],
+    nota:"Attention : Windows 10 ou 11 requis, exécutez PowerShell en administrateur." },
+  { cod:"pt", bt:"Copiar", copiado:"Copiado!", btn:"Deutsch",
+    intro:"Instale o Office no Windows com um único comando do PowerShell. O Office Deployment Tool oficial da Microsoft é baixado e a configuração é montada para você. Copie uma das duas linhas abaixo, cole no PowerShell como administrador e pronto.",
+    li:["Funciona com Office LTSC 2024 / 2021 e Professional Plus 2019 / 2016 / 2013",
+        "32 e 64 bits, Project e Visio opcionais, idioma à sua escolha",
+        "Dá para instalar aplicativo por aplicativo (Word, Excel, etc.)",
+        "Interface com janela (gui) ou modo console (cli), você escolhe"],
+    nota:"Atenção: requer Windows 10 ou 11, execute o PowerShell como administrador." },
+  { cod:"de", bt:"Kopieren", copiado:"Kopiert!", btn:"Italiano",
+    intro:"Installiere Office unter Windows mit einem einzigen PowerShell-Befehl. Das offizielle Office Deployment Tool von Microsoft wird heruntergeladen und die Konfiguration automatisch erstellt. Kopiere eine der beiden Zeilen unten, füge sie als Administrator in PowerShell ein, fertig.",
+    li:["Funktioniert mit Office LTSC 2024 / 2021 und Professional Plus 2019 / 2016 / 2013",
+        "32 und 64 Bit, optionales Project und Visio, Sprache frei wählbar",
+        "Apps einzeln installierbar (Word, Excel usw.)",
+        "Fenster-Oberfläche (gui) oder Konsolenmodus (cli), wie du willst"],
+    nota:"Hinweis: Windows 10 oder 11 nötig, PowerShell als Administrator ausführen." },
+  { cod:"it", bt:"Copia", copiado:"Copiato!", btn:"Español",
+    intro:"Installa Office su Windows con un solo comando di PowerShell. Viene scaricato l'Office Deployment Tool ufficiale di Microsoft e la configurazione viene creata per te. Copia una delle due righe qui sotto, incollala in PowerShell come amministratore e fatto.",
+    li:["Compatibile con Office LTSC 2024 / 2021 e Professional Plus 2019 / 2016 / 2013",
+        "32 e 64 bit, Project e Visio opzionali, lingua a scelta",
+        "Puoi installare le app una alla volta (Word, Excel, ecc.)",
+        "Interfaccia con finestra (gui) o modalità console (cli), scegli tu"],
+    nota:"Attenzione: serve Windows 10 o 11, esegui PowerShell come amministratore." }
+];
+var actual = 0;
+
+function copiar(n) {
+  navigator.clipboard.writeText(document.getElementById("cmd" + n).innerText);
+  var bt = document.getElementById("bt" + n);
+  var d = idiomas[actual];
+  bt.innerText = d.copiado;
+  setTimeout(function() { bt.innerText = d.bt; }, 1200);
+}
+
+function aplicar(d) {
+  document.getElementById("intro").innerText = d.intro;
+  document.getElementById("bt1").innerText = d.bt;
+  document.getElementById("bt2").innerText = d.bt;
+  for (var i = 0; i < 4; i++) {
+    document.getElementById("li" + (i + 1)).innerText = d.li[i];
+  }
+  document.getElementById("nota").innerText = d.nota;
+  document.getElementById("btnIdioma").innerText = d.btn;
+  document.documentElement.lang = d.cod;
+}
+
+function cambiarIdioma() {
+  actual = (actual + 1) % idiomas.length;
+  aplicar(idiomas[actual]);
+  try { localStorage.setItem("idioma", "" + actual); } catch (e) {}
+}
+
+try {
+  var guardado = parseInt(localStorage.getItem("idioma"));
+  if (!isNaN(guardado) && guardado > 0 && guardado < idiomas.length) {
+    actual = guardado;
+    aplicar(idiomas[actual]);
+  }
+} catch (e) {}
+</script>
+</body>
+</html>
