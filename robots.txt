@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://matthew-garay.github.io/MSOI/sitemap.xml
+Sitemap: https://matthew-garay.github.io/Microsoft-Office-installer/sitemap.xml
