@@ -80,29 +80,45 @@ a:hover { color: #58a6ff; text-decoration: underline; }
 
 .mini-flag {
   display: inline-block;
-  width: 18px;
-  height: 12px;
-  border-radius: 2px;
+  width: 20px;
+  height: 13px;
+  border-radius: 2.5px;
   margin-right: 7px;
-  vertical-align: -1px;
+  vertical-align: -2px;
   box-shadow: 0 0 0 1px var(--border);
+  overflow: hidden;
+}
+
+.flag-us {
+  background: repeating-linear-gradient(180deg, #b22234 0 2px, #ffffff 2px 4px);
+  position: relative;
+}
+
+.flag-us::after {
+  content: ""; position: absolute; left: 0; top: 0;
+  width: 9px; height: 7px; background: #3c3b6e;
 }
 
 .flag-gb { background: #012169; position: relative; }
 .flag-gb::before {
   content: ""; position: absolute; inset: 0;
   background:
-    linear-gradient(45deg, transparent 44%, #ffffff 44%, #ffffff 56%, transparent 56%),
-    linear-gradient(-45deg, transparent 44%, #ffffff 44%, #ffffff 56%, transparent 56%);
+    linear-gradient(0deg, transparent 30%, #ffffff 30%, #ffffff 70%, transparent 70%),
+    linear-gradient(90deg, transparent 37.5%, #ffffff 37.5%, #ffffff 62.5%, transparent 62.5%);
 }
 .flag-gb::after {
   content: ""; position: absolute; inset: 0;
   background:
-    linear-gradient(0deg, transparent 38%, #c8102e 38%, #c8102e 62%, transparent 62%),
-    linear-gradient(90deg, transparent 41%, #c8102e 41%, #c8102e 59%, transparent 59%);
+    linear-gradient(0deg, transparent 40%, #c8102e 40%, #c8102e 60%, transparent 60%),
+    linear-gradient(90deg, transparent 44%, #c8102e 44%, #c8102e 56%, transparent 56%);
 }
 
-.flag-es { background: linear-gradient(180deg, #aa151b 25%, #f1bf00 25%, #f1bf00 75%, #aa151b 75%); }
+.flag-mx { background: linear-gradient(90deg, #006847 33%, #ffffff 33%, #ffffff 66%, #ce1126 66%); position: relative; }
+.flag-mx::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #8a6d3b; transform: translate(-50%, -50%);
+}
 
 .flag-fr { background: linear-gradient(90deg, #002395 33%, #ffffff 33%, #ffffff 66%, #ed2939 66%); }
 
@@ -116,18 +132,9 @@ a:hover { color: #58a6ff; text-decoration: underline; }
 
 .flag-hi { background: linear-gradient(180deg, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%); position: relative; }
 .flag-hi::after {
-  content: ""; position: absolute; left: 6px; top: 3px;
+  content: ""; position: absolute; left: 50%; top: 50%;
   width: 4px; height: 4px; border-radius: 50%; background: #000080;
-}
-
-.flag-us { background: #b22234; position: relative; }
-.flag-us::after {
-  content: ""; position: absolute; left: 0; top: 0;
-  width: 8px; height: 6px; background: #3c3b6e;
-  box-shadow:
-    1px 2px 0 0 #ffffff, 3px 2px 0 0 #ffffff, 5px 2px 0 0 #ffffff, 7px 2px 0 0 #ffffff,
-    2px 4px 0 0 #ffffff, 4px 4px 0 0 #ffffff, 6px 4px 0 0 #ffffff,
-    1px 6px 0 0 #ffffff, 3px 6px 0 0 #ffffff, 5px 6px 0 0 #ffffff;
+  transform: translate(-50%, -50%);
 }
 
 .tema-btn {
@@ -460,7 +467,7 @@ h2 {
 /* ---- Estado ---- */
 var idioma = "us-en";
 var tabActual = "gui";
-var cicloIdiomas = ["us-en", "en", "es", "fr", "de", "zh", "hi"];
+var cicloIdiomas = ["us-en", "en", "es-mx", "fr", "de", "zh", "hi"];
 
 var urls = {
   gui: "irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-gui.ps1 | iex",
@@ -510,7 +517,7 @@ var textos = {
     idiomaBtn: "EN",
     flagClass: "flag-gb"
   },
-  es: {
+  "es-mx": {
     subtitulo: "Instala Microsoft Office en Windows con un solo comando de PowerShell.",
     tabGui: "Ventana / GUI",
     tabCli: "Consola / CLI",
@@ -529,7 +536,7 @@ var textos = {
     soBits: function (bits) { return "Windows " + bits + " bits"; },
     pie: "código fuente en GitHub",
     idiomaBtn: "ES",
-    flagClass: "flag-es"
+    flagClass: "flag-mx"
   },
   fr: {
     subtitulo: "Installez Microsoft Office sur Windows avec une seule commande PowerShell.",
