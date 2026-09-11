@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -300,7 +300,7 @@ h2 {
 <body>
 <nav class="nav">
   <div class="marca">Microsoft Office Installer <span>· Matthew Garay</span></div>
-  <button class="idioma-btn" id="btn-idioma" onclick="cambiarIdioma()">EN</button>
+  <button class="idioma-btn" id="btn-idioma" onclick="cambiarIdioma()">🇬🇧 EN</button>
 </nav>
 
 <main class="contenido">
@@ -362,8 +362,9 @@ h2 {
 
 <script>
 /* ---- Estado ---- */
-var idioma = "es";
+var idioma = "en";
 var tabActual = "gui";
+var cicloIdiomas = ["en", "es", "fr", "de", "zh", "hi"];
 
 var urls = {
   gui: "irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-gui.ps1 | iex",
@@ -371,25 +372,6 @@ var urls = {
 };
 
 var textos = {
-  es: {
-    subtitulo: "Instala Microsoft Office en Windows con un solo comando de PowerShell.",
-    tabGui: "Ventana / GUI",
-    tabCli: "Consola / CLI",
-    copiar: "Copiar",
-    copiado: "Copiado",
-    hVersiones: "Versiones compatibles",
-    hRequisitos: "Requisitos",
-    hUso: "Modo de uso",
-    uso1: "Copia una de las dos líneas de comando de arriba, pégala en PowerShell como administrador y listo. El instalador se descarga, prepara la herramienta de despliegue de Office y te deja elegir qué versión instalar.",
-    uso2: "Eligiendo \"Consola / CLI\" se instalará la versión de línea de comandos, con el mismo resultado pero sin interfaz gráfica.",
-    rSoB: "Sistema", rSo: "Windows 7 o superior (32 / 64 bits)",
-    rPsB: "PowerShell", rPs: "Versión 5.0 o superior",
-    rNetB: ".NET Framework", rNet: "Versión 4.5 o superior",
-    rPerB: "Permisos", rPer: "Ejecutar como administrador",
-    soDetectando: "Windows · Detectando arquitectura...",
-    pie: "código fuente en GitHub",
-    idiomaBtn: "EN"
-  },
   en: {
     subtitulo: "Install Microsoft Office on Windows with a single PowerShell command.",
     tabGui: "Window / GUI",
@@ -406,8 +388,109 @@ var textos = {
     rNetB: ".NET Framework", rNet: "Version 4.5 or higher",
     rPerB: "Permissions", rPer: "Run as administrator",
     soDetectando: "Windows · Detecting architecture...",
+    soBits: function (bits) { return "Windows " + bits + " bit"; },
     pie: "source code on GitHub",
-    idiomaBtn: "ES"
+    idiomaBtn: "🇬🇧 EN"
+  },
+  es: {
+    subtitulo: "Instala Microsoft Office en Windows con un solo comando de PowerShell.",
+    tabGui: "Ventana / GUI",
+    tabCli: "Consola / CLI",
+    copiar: "Copiar",
+    copiado: "Copiado",
+    hVersiones: "Versiones compatibles",
+    hRequisitos: "Requisitos",
+    hUso: "Modo de uso",
+    uso1: "Copia una de las dos líneas de comando de arriba, pégala en PowerShell como administrador y listo. El instalador se descarga, prepara la herramienta de despliegue de Office y te deja elegir qué versión instalar.",
+    uso2: "Eligiendo \"Consola / CLI\" se instalará la versión de línea de comandos, con el mismo resultado pero sin interfaz gráfica.",
+    rSoB: "Sistema", rSo: "Windows 7 o superior (32 / 64 bits)",
+    rPsB: "PowerShell", rPs: "Versión 5.0 o superior",
+    rNetB: ".NET Framework", rNet: "Versión 4.5 o superior",
+    rPerB: "Permisos", rPer: "Ejecutar como administrador",
+    soDetectando: "Windows · Detectando arquitectura...",
+    soBits: function (bits) { return "Windows " + bits + " bits"; },
+    pie: "código fuente en GitHub",
+    idiomaBtn: "🇪🇸 ES"
+  },
+  fr: {
+    subtitulo: "Installez Microsoft Office sur Windows avec une seule commande PowerShell.",
+    tabGui: "Fenêtre / GUI",
+    tabCli: "Console / CLI",
+    copiar: "Copier",
+    copiado: "Copié",
+    hVersiones: "Versions prises en charge",
+    hRequisitos: "Configuration requise",
+    hUso: "Mode d'emploi",
+    uso1: "Copiez l'une des deux lignes de commande ci-dessus, collez-la dans PowerShell en tant qu'administrateur et c'est tout. L'installateur télécharge l'outil de déploiement d'Office et vous laisse choisir la version à installer.",
+    uso2: "En choisissant \"Console / CLI\", la version en ligne de commande sera installée, même résultat mais sans interface graphique.",
+    rSoB: "Système", rSo: "Windows 7 ou supérieur (32 / 64 bits)",
+    rPsB: "PowerShell", rPs: "Version 5.0 ou supérieure",
+    rNetB: ".NET Framework", rNet: "Version 4.5 ou supérieure",
+    rPerB: "Autorisations", rPer: "Exécuter en tant qu'administrateur",
+    soDetectando: "Windows · Détection de l'architecture...",
+    soBits: function (bits) { return "Windows " + bits + " bits"; },
+    pie: "code source sur GitHub",
+    idiomaBtn: "🇫🇷 FR"
+  }
+  de: {
+    subtitulo: "Installieren Sie Microsoft Office auf Windows mit einem einzigen PowerShell-Befehl.",
+    tabGui: "Fenster / GUI",
+    tabCli: "Konsole / CLI",
+    copiar: "Kopieren",
+    copiado: "Kopiert",
+    hVersiones: "Unterstützte Versionen",
+    hRequisitos: "Voraussetzungen",
+    hUso: "Verwendung",
+    uso1: "Kopieren Sie eine der beiden Befehlszeilen oben, fügen Sie sie als Administrator in PowerShell ein und fertig. Das Installationsprogramm lädt das Office-Bereitstellungstool herunter und lässt Sie die zu installierende Version wählen.",
+    uso2: "Bei Auswahl von \"Konsole / CLI\" wird die Befehlszeilenversion installiert, gleiches Ergebnis aber ohne grafische Oberfläche.",
+    rSoB: "System", rSo: "Windows 7 oder höher (32 / 64 Bit)",
+    rPsB: "PowerShell", rPs: "Version 5.0 oder höher",
+    rNetB: ".NET Framework", rNet: "Version 4.5 oder höher",
+    rPerB: "Berechtigungen", rPer: "Als Administrator ausführen",
+    soDetectando: "Windows · Architektur wird erkannt...",
+    soBits: function (bits) { return "Windows " + bits + " Bit"; },
+    pie: "Quellcode auf GitHub",
+    idiomaBtn: "🇩🇪 DE"
+  },
+  zh: {
+    subtitulo: "使用一条 PowerShell 命令在 Windows 上安装 Microsoft Office。",
+    tabGui: "窗口 / GUI",
+    tabCli: "控制台 / CLI",
+    copiar: "复制",
+    copiado: "已复制",
+    hVersiones: "支持的版本",
+    hRequisitos: "系统要求",
+    hUso: "使用方法",
+    uso1: "复制上面的任一命令行，以管理员身份粘贴到 PowerShell 中即可。安装程序会下载 Office 部署工具，并让您选择要安装的版本。",
+    uso2: "选择\"控制台 / CLI\"将安装命令行版本，结果相同但没有图形界面。",
+    rSoB: "系统", rSo: "Windows 7 或更高版本（32 / 64 位）",
+    rPsB: "PowerShell", rPs: "5.0 或更高版本",
+    rNetB: ".NET Framework", rNet: "4.5 或更高版本",
+    rPerB: "权限", rPer: "以管理员身份运行",
+    soDetectando: "Windows · 正在检测架构...",
+    soBits: function (bits) { return "Windows " + bits + " 位"; },
+    pie: "GitHub 上的源代码",
+    idiomaBtn: "🇨🇳 中文"
+  },
+  hi: {
+    subtitulo: "एक PowerShell कमांड से Windows पर Microsoft Office इंस्टॉल करें।",
+    tabGui: "विंडो / GUI",
+    tabCli: "कंसोल / CLI",
+    copiar: "कॉपी करें",
+    copiado: "कॉपी हो गया",
+    hVersiones: "समर्थित संस्करण",
+    hRequisitos: "आवश्यकताएँ",
+    hUso: "उपयोग विधि",
+    uso1: "ऊपर दी गई दो में से कोई एक कमांड लाइन कॉपी करें, व्यवस्थापक के रूप में PowerShell में पेस्ट करें और बस। इंस्टॉलर Office डिप्लॉयमेंट टूल डाउनलोड करता है और आपको इंस्टॉल करने के लिए संस्करण चुनने देता है।",
+    uso2: "\"कंसोल / CLI\" चुनने पर कमांड-लाइन संस्करण इंस्टॉल होगा, वही परिणाम लेकिन बिना ग्राफ़िकल इंटरफ़ेस।",
+    rSoB: "सिस्टम", rSo: "Windows 7 या उच्चतर (32 / 64 बिट)",
+    rPsB: "PowerShell", rPs: "संस्करण 5.0 या उच्चतर",
+    rNetB: ".NET Framework", rNet: "संस्करण 4.5 या उच्चतर",
+    rPerB: "अनुमतियाँ", rPer: "व्यवस्थापक के रूप में चलाएँ",
+    soDetectando: "Windows · आर्किटेक्चर का पता लगा रहा है...",
+    soBits: function (bits) { return "Windows " + bits + " बिट"; },
+    pie: "GitHub पर सोर्स कोड",
+    idiomaBtn: "🇮🇳 हिन्दी"
   }
 };
 /* ---- Detección de arquitectura del SO ---- */
@@ -424,7 +507,7 @@ var textos = {
     if (bits) {
       var b = document.getElementById("badge-so");
       b.setAttribute("data-bits", bits);
-      b.textContent = idioma === "es" ? "Windows " + bits + " bits" : "Windows " + bits + " bit";
+      b.textContent = textos[idioma].soBits(bits);
     }
   } catch (e) { /* el badge queda como está */ }
 })();
@@ -499,12 +582,13 @@ function aplicarIdioma() {
   if (!btn.classList.contains("copiado")) btn.textContent = t.copiar;
   var so = document.getElementById("badge-so");
   var bits = so.getAttribute("data-bits");
-  so.textContent = bits ? (idioma === "es" ? "Windows " + bits + " bits" : "Windows " + bits + " bit") : t.soDetectando;
+  so.textContent = bits ? t.soBits(bits) : t.soDetectando;
   document.documentElement.lang = idioma;
 }
 
 function cambiarIdioma() {
-  idioma = idioma === "es" ? "en" : "es";
+  var i = cicloIdiomas.indexOf(idioma);
+  idioma = cicloIdiomas[(i + 1) % cicloIdiomas.length];
   aplicarIdioma();
 }
 
