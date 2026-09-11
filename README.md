@@ -1,6 +1,6 @@
-# MSOI · Office Installer
+# Microsoft Office Installer
 
-MSOI — Instala Office en Windows desde PowerShell con un solo comando.
+Microsoft Office Installer — Instala Office en Windows desde PowerShell con un solo comando.
 
 ```powershell
 irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-gui.ps1 | iex
