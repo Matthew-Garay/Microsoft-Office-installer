@@ -78,6 +78,48 @@ a:hover { color: #58a6ff; text-decoration: underline; }
   margin-right: 6px;
 }
 
+.mini-flag {
+  display: inline-block;
+  width: 18px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 7px;
+  vertical-align: -1px;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.flag-gb { background: #012169; position: relative; }
+.flag-gb::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(45deg, transparent 44%, #ffffff 44%, #ffffff 56%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, #ffffff 44%, #ffffff 56%, transparent 56%);
+}
+.flag-gb::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(0deg, transparent 38%, #c8102e 38%, #c8102e 62%, transparent 62%),
+    linear-gradient(90deg, transparent 41%, #c8102e 41%, #c8102e 59%, transparent 59%);
+}
+
+.flag-es { background: linear-gradient(180deg, #aa151b 25%, #f1bf00 25%, #f1bf00 75%, #aa151b 75%); }
+
+.flag-fr { background: linear-gradient(90deg, #002395 33%, #ffffff 33%, #ffffff 66%, #ed2939 66%); }
+
+.flag-de { background: linear-gradient(180deg, #000000 33%, #dd0000 33%, #dd0000 66%, #ffce00 66%); }
+
+.flag-zh { background: #de2910; position: relative; }
+.flag-zh::after {
+  content: ""; position: absolute; left: 3px; top: 2px;
+  width: 4px; height: 4px; border-radius: 50%; background: #ffde00;
+}
+
+.flag-hi { background: linear-gradient(180deg, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%); position: relative; }
+.flag-hi::after {
+  content: ""; position: absolute; left: 6px; top: 3px;
+  width: 4px; height: 4px; border-radius: 50%; background: #000080;
+}
+
 .tema-btn {
   background: transparent;
   border: 1px solid var(--border);
@@ -341,7 +383,7 @@ h2 {
 <body>
 <nav class="nav">
   <div class="marca">Microsoft Office Installer <span>· Matthew Garay</span></div>
-  <button class="idioma-btn" id="btn-idioma" onclick="cambiarIdioma()"><span class="bandera">🇬🇧</span> <span id="btn-idioma-texto">EN</span></button>
+  <button class="idioma-btn" id="btn-idioma" onclick="cambiarIdioma()"><span class="bandera mini-flag flag-gb"></span> <span id="btn-idioma-texto">EN</span></button>
   <span class="acciones">
     <button class="tema-btn" id="btn-tema" onclick="cambiarTema()" title="Modo claro / obscuro">☀️</button>
   </span>
@@ -435,7 +477,7 @@ var textos = {
     soBits: function (bits) { return "Windows " + bits + " bit"; },
     pie: "source code on GitHub",
     idiomaBtn: "EN",
-    idiomaFlag: "🇬🇧"
+    flagClass: "flag-gb"
   },
   es: {
     subtitulo: "Instala Microsoft Office en Windows con un solo comando de PowerShell.",
@@ -456,7 +498,7 @@ var textos = {
     soBits: function (bits) { return "Windows " + bits + " bits"; },
     pie: "código fuente en GitHub",
     idiomaBtn: "ES",
-    idiomaFlag: "🇪🇸"
+    flagClass: "flag-es"
   },
   fr: {
     subtitulo: "Installez Microsoft Office sur Windows avec une seule commande PowerShell.",
@@ -477,7 +519,7 @@ var textos = {
     soBits: function (bits) { return "Windows " + bits + " bits"; },
     pie: "code source sur GitHub",
     idiomaBtn: "FR",
-    idiomaFlag: "🇫🇷"
+    flagClass: "flag-fr"
   }
   de: {
     subtitulo: "Installieren Sie Microsoft Office auf Windows mit einem einzigen PowerShell-Befehl.",
@@ -498,7 +540,7 @@ var textos = {
     soBits: function (bits) { return "Windows " + bits + " Bit"; },
     pie: "Quellcode auf GitHub",
     idiomaBtn: "DE",
-    idiomaFlag: "🇩🇪"
+    flagClass: "flag-de"
   },
   zh: {
     subtitulo: "使用一条 PowerShell 命令在 Windows 上安装 Microsoft Office。",
@@ -519,7 +561,7 @@ var textos = {
     soBits: function (bits) { return "Windows " + bits + " 位"; },
     pie: "GitHub 上的源代码",
     idiomaBtn: "中文",
-    idiomaFlag: "🇨🇳"
+    flagClass: "flag-zh"
   },
   hi: {
     subtitulo: "एक PowerShell कमांड से Windows पर Microsoft Office इंस्टॉल करें।",
@@ -540,7 +582,7 @@ var textos = {
     soBits: function (bits) { return "Windows " + bits + " बिट"; },
     pie: "GitHub पर सोर्स कोड",
     idiomaBtn: "हिन्दी",
-    idiomaFlag: "🇮🇳"
+    flagClass: "flag-hi"
   }
 };
 /* ---- Detección de arquitectura del SO ---- */
@@ -611,7 +653,7 @@ function copiarFallback(texto) {
 function aplicarIdioma() {
   var t = textos[idioma];
   var btn = document.getElementById("btn-idioma");
-  document.querySelector("#btn-idioma .bandera").textContent = t.idiomaFlag;
+  document.querySelector("#btn-idioma .bandera").className = "bandera mini-flag " + t.flagClass;
   document.getElementById("btn-idioma-texto").textContent = t.idiomaBtn;
   document.getElementById("subtitulo").textContent = t.subtitulo;
   document.getElementById("tab-gui").textContent = t.tabGui;
