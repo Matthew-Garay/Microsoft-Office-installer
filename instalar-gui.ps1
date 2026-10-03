@@ -6,7 +6,7 @@
     Supports multiple editions, architectures, languages and app selection.
 .NOTES
     Requirements: Administrator, PowerShell 5.0+, .NET Framework 4.5+
-    Usage: irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-gui.ps1 | iex
+    Usage: irm https://raw.githubusercontent.com/Matthew-Garay/Microsoft-Office-installer/main/instalar-gui.ps1 | iex
 #>
 
 #Requires -RunAsAdministrator

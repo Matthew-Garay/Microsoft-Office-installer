@@ -6,10 +6,10 @@
 <title>Microsoft Office Installer</title>
 <meta name="description" content="Microsoft Office Installer — Herramienta para instalar Microsoft Office (LTSC 2024, 2021, 2019, 2016 y 2013) en Windows desde PowerShell con un solo comando. Hecha por Matthew Garay.">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://matthew-garay.github.io/Microsoft-Office-installer/">
+<link rel="canonical" href="https://github.com/Matthew-Garay/Microsoft-Office-installer">
 <meta property="og:title" content="Microsoft Office Installer">
 <meta property="og:description" content="Microsoft Office Installer — Instala Office en Windows con un solo comando de PowerShell.">
-<meta property="og:url" content="https://matthew-garay.github.io/Microsoft-Office-installer/">
+<meta property="og:url" content="https://github.com/Matthew-Garay/Microsoft-Office-installer">
 <style>
 :root {
   --bg: #0d1117;
@@ -428,7 +428,7 @@ h2 {
       <button class="tab" id="tab-cli" role="tab" onclick="cambiarTab('cli')">Consola / CLI</button>
     </div>
     <div class="caja-comando-fila">
-      <div class="caja-comando" id="comando">irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-gui.ps1 | iex</div>
+      <div class="caja-comando" id="comando">irm https://raw.githubusercontent.com/Matthew-Garay/Microsoft-Office-installer/main/instalar-gui.ps1 | iex</div>
       <button class="boton-copiar" id="btn-copiar" onclick="copiar()">Copiar</button>
     </div>
   </section>
@@ -474,8 +474,8 @@ var tabActual = "gui";
 var cicloIdiomas = ["us-en", "en", "es-mx", "fr", "de", "zh", "hi"];
 
 var urls = {
-  gui: "irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-gui.ps1 | iex",
-  cli: "irm https://matthew-garay.github.io/Microsoft-Office-installer/instalar-cli.ps1 | iex"
+  gui: "irm https://raw.githubusercontent.com/Matthew-Garay/Microsoft-Office-installer/main/instalar-gui.ps1 | iex",
+  cli: "irm https://raw.githubusercontent.com/Matthew-Garay/Microsoft-Office-installer/main/instalar-cli.ps1 | iex"
 };
 
 var textos = {
