@@ -40,29 +40,9 @@ irm https://raw.githubusercontent.com/Matthew-Garay/Microsoft-Office-installer/m
 
 Enlace directo: `https://raw.githubusercontent.com/Matthew-Garay/Microsoft-Office-installer/main/instalar-cli.ps1`
 
-### Modo desatendido
-
-La versión CLI acepta parámetros, así que también sirve desde un script sin
-intervención:
-
-```powershell
-.\instalar-cli.ps1 -Version 2 -Language es-ES -Apps Word,Excel,PowerPoint,Outlook -Yes
-```
-
-| Parámetro | Valores | Por omisión |
-|-----------|---------|-------------|
-| `-Version` | 1 a 5 (2024, 2021, 2019, 2016, 2013) | pregunta |
-| `-Language` | Código de cultura, p. ej. `es-ES`, `en-US` | pregunta |
-| `-Apps` | `Word,Excel,PowerPoint,...` | pregunta (Word, Excel y PowerPoint) |
-| `-Yes` | salta la confirmación final | pregunta |
-
-Nombres válidos para `-Apps`: `Word`, `Excel`, `PowerPoint`, `Outlook`, `Access`,
-`Publisher`, `OneNote`, `SkypeForBusiness`, `Project`, `Visio`. Un nombre o un
-idioma que no exista aborta el script con el código de salida 1 y la lista de
-valores válidos, en lugar de instalar cualquier cosa.
-
-**Aviso:** sin `-Yes`, el script pide confirmación antes de instalar, porque una
-instalación de Office no tiene vuelta atrás.
+La versión CLI también es interactiva: pregunta versión, idioma y aplicaciones
+en pantalla, muestra un resumen y pide confirmación antes de instalar, porque
+una instalación de Office no tiene vuelta atrás.
 
 ---
 
@@ -89,9 +69,8 @@ instalación de Office no tiene vuelta atrás.
 - **Excluye lo que no se pidió** — las aplicaciones no seleccionadas y los servicios incluidos (Bing, Groove, Lync, OneDrive, Teams) van como `ExcludeApp`
 - **GUI con Windows Forms** — interfaz gráfica construida con `System.Windows.Forms` y `DarkMode` personalizado
 - **CLI con terminal UI** — interfaz de consola con banner tipográfico, pasos numerados y barras de progreso con bloques (`█`)
-- **CLI parametrizable** — versión, idioma y aplicaciones se pueden pasar por parámetro para instalaciones desatendidas
-- **Modo no interactivo seguro** — un idioma o una aplicación desconocida aborta con el código 1 y la lista de valores válidos, en vez de instalar algo que no se pidió
-- **Confirmación previa** — la CLI pide confirmación antes de instalar, salvo que se pase `-Yes`
+- **Flujo guiado en ambas ediciones** — versión, idioma y aplicaciones se eligen en pantalla, paso a paso
+- **Confirmación previa** — ambas ediciones piden confirmación antes de instalar
 - **Registros de instalación** — logs en `%TEMP%\OfficeInstallerGUI_Install.log` y `%TEMP%\OfficeInstallerCLI_Install.log`
 - **Manejo de errores** — try/catch con captura de excepciones y escritura en logs
 - **Execution Policy** — soporte para `Set-ExecutionPolicy` en primera ejecución

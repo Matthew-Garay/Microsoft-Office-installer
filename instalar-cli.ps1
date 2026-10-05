@@ -5,26 +5,10 @@
     Command-line tool to download and install Microsoft Office LTSC editions.
     Supports multiple editions, architectures, languages and app selection.
 
-    Run it with no arguments for the guided flow. Every choice can also be
-    passed as a parameter, which is what makes the script usable unattended.
-.PARAMETER Version
-    1-5, in this order: LTSC Professional Plus 2024, LTSC Professional Plus
-    2021, Professional Plus 2019, Professional Plus 2016 and Professional
-    Plus 2013. Omit it to choose interactively.
-.PARAMETER Language
-    Culture code, for example es-MX or en-US. Omit it to choose interactively.
-.PARAMETER Apps
-    Applications to install, for example Word,Excel,PowerPoint. Project and
-    Visio are installed as their own product; the rest belong to the Office
-    product. Omit it to choose interactively; the default is Word, Excel and
-    PowerPoint.
-.PARAMETER Yes
-    Skip the confirmation prompt. Without it the script asks before touching
-    the machine, because an Office installation has no undo.
+    Guided interactive flow: every choice is picked on screen, and nothing
+    is installed without confirmation.
 .EXAMPLE
     .\instalar-cli.ps1
-.EXAMPLE
-    .\instalar-cli.ps1 -Version 2 -Language es-MX -Apps Word,Excel,PowerPoint,Outlook
 .EXAMPLE
     irm https://raw.githubusercontent.com/Matthew-Garay/Microsoft-Office-installer/main/instalar-cli.ps1 | iex
 .NOTES
@@ -33,14 +17,6 @@
     This script installs Office; it does not activate it. A valid license is
     required and nothing here bypasses activation.
 #>
-
-[CmdletBinding()]
-param(
-    [int]$Version,
-    [string]$Language,
-    [string[]]$Apps,
-    [switch]$Yes
-)
 
 # ---- ADMIN CHECK ----
 $script:isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -360,60 +336,18 @@ Show-Banner
 # ---- STEP 1: VERSION ----
 Show-Step 1 5 "Select the Office version"
 $versionLabels = @(); foreach ($v in $script:versions) { $versionLabels += $v.Label }
-if ($Version -ge 1 -and $Version -le $script:versions.Count) {
-    $vi = $script:versions[$Version - 1]
-    Ok "$($vi.Label)  (-Version $Version)"
-} else {
-    if ($Version -ne 0) { Write-Log "Ignoring out-of-range -Version $Version" }
-    $vi = $script:versions[(Ask-Choice -Title "VERSION" -Options $versionLabels)]
-    Ok $vi.Label
-}
+$vi = $script:versions[(Ask-Choice -Title "VERSION" -Options $versionLabels)]
+Ok $vi.Label
 
 # ---- STEP 2: LANGUAGE ----
 Show-Step 2 5 "Select the language"
 $langCodes = @(); foreach ($l in $script:languages) { $langCodes += (Get-LangCode $l) }
-if ($Language) {
-    $lang = $langCodes | Where-Object { $_ -eq $Language } | Select-Object -First 1
-    if (-not $lang) {
-        Fail "Unknown language: $Language"
-        Fail "Available: $($langCodes -join ', ')"
-        Write-Log "Unknown language requested: $Language"
-        exit 1
-    }
-    Ok "$lang  (-Language $Language)"
-} else {
-    $lang = $langCodes[(Ask-Choice -Title "LANGUAGE" -Options $script:languages)]
-    Ok $lang
-}
+$lang = $langCodes[(Ask-Choice -Title "LANGUAGE" -Options $script:languages)]
+Ok $lang
 
 # ---- STEP 3: APPLICATIONS ----
 Show-Step 3 5 "Select the applications"
-$selected = @()
-if ($Apps) {
-    # Accept both -Apps Word,Excel and -Apps "Word, Excel".
-    $flat = @()
-    foreach ($a in $Apps) { $flat += ($a -split ",") }
-    $bad = $false
-    foreach ($a in $flat) {
-        $a = $a.Trim()
-        if (-not $a) { continue }
-        $hit = $script:appCatalog | Where-Object { $_.Tag -eq $a } | Select-Object -First 1
-        if ($hit) {
-            if ($selected -notcontains $hit.Tag) { $selected += $hit.Tag }
-        } else {
-            Fail "Unknown application: $a"
-            $bad = $true
-        }
-    }
-    if ($bad) {
-        Fail "Valid names: $(($script:appCatalog | ForEach-Object { $_.Tag }) -join ', ')"
-        Write-Log "Unknown application requested through -Apps"
-        exit 1
-    }
-    Ok "Selected through -Apps"
-} else {
-    $selected = Ask-Apps
-}
+$selected = Ask-Apps
 foreach ($t in $selected) {
     $lbl = ($script:appCatalog | Where-Object { $_.Tag -eq $t } | Select-Object -First 1).Label
     Dim "+ $lbl"
@@ -447,20 +381,18 @@ Dim "Apps     : $($selected -join ', ')"
 Dim "System   : $(if ($script:is64Bit) { '64' } else { '32' })-bit"
 Write-Host ""
 
-if (-not $Yes) {
-    Dim "An Office installation cannot be undone by this script."
-    Dim "If Office is already installed, this replaces it."
-    Write-Host ""
-    Color "  Press ENTER to start, or type n to abort: " "White"
-    $ans = Read-Host
-    $ans = if ($null -eq $ans) { "" } else { $ans.Trim().ToLower() }
-    if ($ans -eq "n" -or $ans -eq "no") {
-        Info "Aborted. Nothing was changed."
-        Write-Log "Aborted by the operator"
-        if (Test-Path $script:odtTemp) { Remove-Item $script:odtTemp -Recurse -Force -ErrorAction SilentlyContinue }
-        if (Test-Path $script:odtExe)  { Remove-Item $script:odtExe -Force -ErrorAction SilentlyContinue }
-        exit 0
-    }
+Dim "An Office installation cannot be undone by this script."
+Dim "If Office is already installed, this replaces it."
+Write-Host ""
+Color "  Press ENTER to start, or type n to abort: " "White"
+$ans = Read-Host
+$ans = if ($null -eq $ans) { "" } else { $ans.Trim().ToLower() }
+if ($ans -eq "n" -or $ans -eq "no") {
+    Info "Aborted. Nothing was changed."
+    Write-Log "Aborted by the operator"
+    if (Test-Path $script:odtTemp) { Remove-Item $script:odtTemp -Recurse -Force -ErrorAction SilentlyContinue }
+    if (Test-Path $script:odtExe)  { Remove-Item $script:odtExe -Force -ErrorAction SilentlyContinue }
+    exit 0
 }
 
 Show-ProgressBar 0 "Installing"

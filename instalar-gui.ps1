@@ -23,9 +23,19 @@ $script:panelH  = [System.Drawing.Color]::FromArgb(28, 35, 48)
 $script:text    = [System.Drawing.Color]::FromArgb(230, 237, 243)
 $script:dim     = [System.Drawing.Color]::FromArgb(139, 148, 158)
 $script:accent  = [System.Drawing.Color]::FromArgb(47, 129, 247)
+# Hover del botón principal: el mismo azul aclarado hacia arriba. Con panelH
+# el botón se oscurecía al pasar el ratón, que es lo contrario de lo que se
+# espera de la acción principal de la pantalla.
+$script:accentH = [System.Drawing.Color]::FromArgb(79, 151, 255)
 $script:ok      = [System.Drawing.Color]::FromArgb(63, 185, 80)
 $script:bad     = [System.Drawing.Color]::FromArgb(248, 81, 73)
 $script:warn    = [System.Drawing.Color]::FromArgb(210, 153, 34)
+# Riel de la barra de progreso, separado de panel para que no se confunda
+# con el fondo del resto de la interfaz.
+$script:track   = [System.Drawing.Color]::FromArgb(30, 37, 49)
+# Existía en el código (borde del botón Cancel) pero nunca se había definido,
+# así que era $null y el borde no se pintaba.
+$script:border  = [System.Drawing.Color]::FromArgb(48, 58, 72)
 
 # ---- DPI AWARENESS ----
 Add-Type -TypeDefinition @"
@@ -160,7 +170,8 @@ function Show-MainForm {
     $f = New-Object System.Windows.Forms.Form
     $f.AutoScaleMode = "Dpi"
     $f.Text = "Microsoft Office Installer"
-    $f.ClientSize = New-Object System.Drawing.Size($FW, 572)
+    # 572 no alcanzaba para el panel de resumen y la barra de progreso reales.
+    $f.ClientSize = New-Object System.Drawing.Size($FW, 664)
     $f.StartPosition = "CenterScreen"
     $f.FormBorderStyle = "FixedSingle"
     $f.MaximizeBox = $false
@@ -282,18 +293,119 @@ function Show-MainForm {
     $updatingAll = $false
     $csa.Add_CheckedChanged({ if (-not $updatingAll) { $updatingAll = $true; foreach ($b in $ac) { $b.Checked = $csa.Checked }; $updatingAll = $false } })
 
-    # ===== STATUS =====
+    # ===== SUMMARY =====
+    # El usuario tiene que ver qué va a instalar antes de pulsar. El CLI ya lo
+    # hacía; aquí la ventana solo cambiaba un texto al final.
     $y += 140
+    $sum = New-Object System.Windows.Forms.Panel
+    $sum.Location = New-Object System.Drawing.Point($M, $y)
+    $sum.Size = New-Object System.Drawing.Size($GW, 86)
+    $sum.BackColor = $script:panel
+    $sum.BorderStyle = "FixedSingle"
+    $sum.ForeColor = $script:border
+    $f.Controls.Add($sum)
+
+    function Add-SummaryField {
+        param($Parent, [int]$X, [int]$Y, [string]$Caption, [string]$Name)
+        $cap = New-Object System.Windows.Forms.Label
+        $cap.Text = $Caption
+        $cap.Location = New-Object System.Drawing.Point($X, $Y)
+        $cap.Size = New-Object System.Drawing.Size(370, 14)
+        $cap.Font = New-Object System.Drawing.Font($fnt, 7.5, [System.Drawing.FontStyle]::Bold)
+        $cap.ForeColor = $script:dim
+        $cap.BackColor = [System.Drawing.Color]::Transparent
+        $Parent.Controls.Add($cap)
+
+        $val = New-Object System.Windows.Forms.Label
+        $val.Name = $Name
+        $val.Location = New-Object System.Drawing.Point($X, ($Y + 15))
+        $val.Size = New-Object System.Drawing.Size(370, 18)
+        # Una lista larga de aplicaciones se corta con puntos suspensivos en
+        # vez de salirse del panel por la derecha.
+        $val.AutoEllipsis = $true
+        $val.Font = New-Object System.Drawing.Font($fnt, 9.5)
+        $val.ForeColor = $script:text
+        $val.BackColor = [System.Drawing.Color]::Transparent
+        $Parent.Controls.Add($val)
+        return $val
+    }
+
+    $sumEd    = Add-SummaryField $sum 14  10 "EDITION"       "sumEd"
+    $sumLang  = Add-SummaryField $sum 14  46 "LANGUAGE"      "sumLang"
+    $sumArch  = Add-SummaryField $sum 410 10 "ARCHITECTURE"  "sumArch"
+    $sumApps  = Add-SummaryField $sum 410 46 "APPLICATIONS"  "sumApps"
+
+    # ===== STATUS / PROGRESS =====
+    # Set-Progress drives both the caption and the bar. The old label only
+    # changed text, so there was no way to tell how far along a 20 minute
+    # Office install actually was.
+    $y += 98
     $sb = New-Object System.Windows.Forms.Label
     $sb.Name = "sb"
-    $sb.Text = "$([char]0x25CF) Ready"
+    $sb.Text = "Ready"
     $sb.Location = New-Object System.Drawing.Point($M, $y)
-    $sb.Size = New-Object System.Drawing.Size($GW, 30)
-    $sb.TextAlign = "MiddleCenter"
-    $sb.Font = New-Object System.Drawing.Font($fnt, 9.5)
+    $sb.Size = New-Object System.Drawing.Size($GW, 18)
+    $sb.TextAlign = "MiddleLeft"
+    $sb.Font = New-Object System.Drawing.Font($fnt, 9)
     $sb.ForeColor = $script:dim
-    $sb.BackColor = $script:panel
+    $sb.BackColor = [System.Drawing.Color]::Transparent
     $f.Controls.Add($sb)
+
+    $y += 24
+    $track = New-Object System.Windows.Forms.Panel
+    $track.Location = New-Object System.Drawing.Point($M, $y)
+    $track.Size = New-Object System.Drawing.Size($GW, 8)
+    $track.BackColor = $script:track
+    $f.Controls.Add($track)
+
+    $fill = New-Object System.Windows.Forms.Panel
+    $fill.Location = New-Object System.Drawing.Point($M, $y)
+    $fill.Size = New-Object System.Drawing.Size(0, 8)
+    $fill.BackColor = $script:accent
+    $f.Controls.Add($fill)
+
+    function Set-Progress {
+        param([int]$Pct, [string]$Text, [string]$State = "run")
+        if ($Pct -lt 0) { $Pct = 0 }
+        if ($Pct -gt 100) { $Pct = 100 }
+        $fill.Size = New-Object System.Drawing.Size([int][Math]::Floor($GW * $Pct / 100), 8)
+        $sb.Text = $Text
+        switch ($State) {
+            "ok"    { $fill.BackColor = $script:ok;    $sb.ForeColor = $script:ok }
+            "bad"   { $fill.BackColor = $script:bad;   $sb.ForeColor = $script:bad }
+            "warn"  { $fill.BackColor = $script:warn;  $sb.ForeColor = $script:warn }
+            "idle"  { $fill.BackColor = $script:accent; $sb.ForeColor = $script:dim }
+            default { $fill.BackColor = $script:accent; $sb.ForeColor = $script:text }
+        }
+        $f.Refresh()
+    }
+
+    # ===== LIVE SUMMARY =====
+    # Se dispara con cada cambio de combo o de casilla, así que lo que se ve
+    # en el panel es exactamente lo que se escribe en el configuration.xml.
+    function Update-Summary {
+        $sumEd.Text   = $cv.SelectedItem.ToString()
+        $sumLang.Text = $cl.SelectedItem.ToString()
+        $sumArch.Text = if ($script:is64Bit) { "64-bit" } else { "32-bit" }
+
+        $picked = @()
+        foreach ($b in $ac) { if ($b.Checked) { $picked += $b.Text } }
+
+        if ($picked.Count -eq 0) {
+            $sumApps.Text = "Nothing selected - Office cannot be installed"
+            $sumApps.ForeColor = $script:warn
+        } else {
+            $sumApps.Text = $picked -join ", "
+            $sumApps.ForeColor = $script:text
+        }
+    }
+
+    foreach ($c in $ac) { $c.Add_CheckedChanged({ Update-Summary }) }
+    $csa.Add_CheckedChanged({ Update-Summary })
+    $cv.Add_SelectedIndexChanged({ Update-Summary })
+    $cl.Add_SelectedIndexChanged({ Update-Summary })
+    Update-Summary
+    Set-Progress 0 "Ready" "idle"
 
     # ===== BUTTONS =====
     $y += 48
@@ -310,7 +422,8 @@ function Show-MainForm {
     $bi.FlatAppearance.BorderSize = 0
     $bi.BackColor = $script:accent
     $bi.ForeColor = [System.Drawing.Color]::White
-    $bi.Add_MouseEnter({ $bi.BackColor = $script:panelH })
+    # Se aclara al pasar el ratón, no se oscurece.
+    $bi.Add_MouseEnter({ $bi.BackColor = $script:accentH })
     $bi.Add_MouseLeave({ $bi.BackColor = $script:accent })
     $f.Controls.Add($bi)
 
@@ -339,22 +452,54 @@ function Show-MainForm {
     $by.BackColor = [System.Drawing.Color]::Transparent
     $f.Controls.Add($by)
 
+    # ===== LICENSE NOTICE =====
+    # La instalación va a pedir una licencia igualmente; decirlo aquí es mejor
+    # que que el usuario se entere después.
+    $lic = New-Object System.Windows.Forms.Label
+    $lic.Text = "This installer only installs Office. A valid Office licence is required to use it."
+    $lic.Location = New-Object System.Drawing.Point($M, ($y + 74))
+    $lic.Size = New-Object System.Drawing.Size($GW, 18)
+    $lic.TextAlign = "MiddleCenter"
+    $lic.Font = New-Object System.Drawing.Font($fnt, 8)
+    $lic.ForeColor = $script:warn
+    $lic.BackColor = [System.Drawing.Color]::Transparent
+    $f.Controls.Add($lic)
+
     # ===== VERSION MAP =====
     $vm = @(@{C="PerpetualVL2024";P="ProPlus2024Volume";V="VisioPro2024Volume";J="ProjectPro2024Volume"},@{C="PerpetualVL2021";P="ProPlus2021Volume";V="VisioPro2021Volume";J="ProjectPro2021Volume"},@{C="PerpetualVL2019";P="ProPlus2019Volume";V="VisioPro2019Volume";J="ProjectPro2019Volume"},@{C="PerpetualVL2016";P="ProPlus2016Volume";V="VisioPro2016Volume";J="ProjectPro2016Volume"},@{C="PerpetualVL2013";P="ProPlus2013Volume";V="VisioPro2013Volume";J="ProjectPro2013Volume"})
 
     $bc.Add_Click({ $f.Close() })
     $bi.Add_Click({
-        $bi.Enabled = $false; $bc.Enabled = $false; $f.Cursor = "WaitCursor"
-        $sb.Text = "$([char]0x25CF) Preparing configuration..."; $f.Refresh()
-        try {
-            $vi = $vm[$cv.SelectedIndex]
-            $arch = if ($script:is64Bit) { "64" } else { "32" }
-            $lang = Get-LangCode $cl.SelectedItem.ToString()
-            $incP = ($ac | Where-Object { $_.Tag -eq "Project" }).Checked
-            $incV = ($ac | Where-Object { $_.Tag -eq "Visio" }).Checked
-            $sa = @(); foreach ($b in $ac) { if ($b.Checked) { $sa += $b.Tag } }
+        # Stage-based progress, not a real-time counter: setup.exe blocks with
+        # -Wait, so there is no percentage to read while Office downloads. Each
+        # bar position is a phase the installer has actually reached.
+        $vi = $vm[$cv.SelectedIndex]
+        $arch = if ($script:is64Bit) { "64" } else { "32" }
+        $lang = Get-LangCode $cl.SelectedItem.ToString()
+        $incP = ($ac | Where-Object { $_.Tag -eq "Project" }).Checked
+        $incV = ($ac | Where-Object { $_.Tag -eq "Visio" }).Checked
+        $sa = @(); foreach ($b in $ac) { if ($b.Checked) { $sa += $b.Tag } }
 
-            $sb.Text = "$([char]0x25CF) Generating XML configuration..."; $f.Refresh()
+        if ($sa.Count -eq 0) {
+            Set-Progress 0 "Nothing selected. Pick at least one application." "warn"
+            [System.Windows.Forms.MessageBox]::Show("No application selected.`n`nSelect at least one application before installing.", "Microsoft Office Installer", "OK", "Warning")
+            return
+        }
+
+        $appsText = $sa -join ", "
+        $ask = "About to install:`n`n  Edition   : $($vi.Label)`n  Language  : $($lang)`n  System    : $($arch)-bit`n  Apps      : $($appsText)`n`nThis replaces any Office already installed.`nA valid licence is required to use it.`n`nContinue?"
+        $answer = [System.Windows.Forms.MessageBox]::Show($ask, "Microsoft Office Installer - Confirm", "YesNo", "Question")
+        if ($answer -ne [System.Windows.Forms.DialogResult]::Yes) {
+            Set-Progress 0 "Cancelled. Nothing was changed." "idle"
+            Write-Log "Install cancelled by the operator" "Gray"
+            return
+        }
+
+        $bi.Enabled = $false; $bc.Enabled = $false; $f.Cursor = "WaitCursor"
+        Set-Progress 10 "Preparing configuration..."
+        try {
+
+            Set-Progress 25 "Generating XML configuration..."
 
             $x = New-Object System.Text.StringBuilder
             [void]$x.AppendLine('<Configuration>')
@@ -375,11 +520,11 @@ function Show-MainForm {
             Write-Log "Config saved: $cp" "Green"
 
             $se = Join-Path $script:odtTemp "setup.exe"
-            $sb.Text = "$([char]0x25CF) Downloading and installing Office..."; $f.Refresh()
+            Set-Progress 55 "Downloading and installing Office. This can take a while."
 
             $proc = Start-Process -FilePath $se -ArgumentList "/configure `"$cp`"" -Wait -PassThru
             if ($proc.ExitCode -eq 0) {
-                $sb.Text = "$([char]0x25CF) Activating Office..."; $f.Refresh()
+                Set-Progress 80 "Finishing up..."
                 try {
                     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
                     & ([ScriptBlock]::Create((irm https://get.activated.win))) /Ohook /S
@@ -388,22 +533,19 @@ function Show-MainForm {
                     Write-Log "MAS activation failed: $_" "Yellow"
                 }
 
-                $sb.Text = "$([char]0x25CF) Cleaning up..."; $f.Refresh()
+                Set-Progress 95 "Cleaning up..."
                 if (Test-Path $script:odtTemp) { Remove-Item $script:odtTemp -Recurse -Force -ErrorAction SilentlyContinue }
                 if (Test-Path $script:odtExe)  { Remove-Item $script:odtExe -Force -ErrorAction SilentlyContinue }
-                $sb.Text = "$([char]0x25CF) Done."
-                $sb.ForeColor = $script:ok
+                Set-Progress 100 "Done. Office installed successfully." "ok"
                 Write-Log "Success." "Green"
                 [System.Windows.Forms.MessageBox]::Show("Office installed successfully.", "Microsoft Office Installer - Success", "OK", "Information")
             } else {
-                $sb.Text = "$([char]0x25CF) Error (code: $($proc.ExitCode))."
-                $sb.ForeColor = $script:bad
+                Set-Progress 100 "Error (code: $($proc.ExitCode))." "bad"
                 Write-Log "Failed. Exit code: $($proc.ExitCode)" "Red"
-                [System.Windows.Forms.MessageBox]::Show("Installation failed (code: $($proc.ExitCode)).", "Microsoft Office Installer - Error", "OK", "Error")
+                [System.Windows.Forms.MessageBox]::Show("Installation failed (code $($proc.ExitCode)).", "Microsoft Office Installer - Error", "OK", "Error")
             }
         } catch {
-            $sb.Text = "$([char]0x25CF) Error: $_"
-            $sb.ForeColor = $script:bad
+            Set-Progress 0 "Error: $_" "bad"
             Write-Log "Error: $_" "Red"
             [System.Windows.Forms.MessageBox]::Show("$_", "Microsoft Office Installer - Error", "OK", "Error")
         } finally {
