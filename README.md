@@ -59,33 +59,6 @@ una instalación de Office no tiene vuelta atrás.
 
 ---
 
-## Características (código)
-
-- **PowerShell nativo** — sin dependencias externas, solo cmdlets del sistema
-- **Descarga automática del ODT** — descarga el Office Deployment Tool desde los servidores oficiales de Microsoft con `System.Net.WebClient`
-- **Fuentes de ODT en lista** — `$script:odtUrls` se recorre en orden y el script pasa a la siguiente si una falla; hoy hay una sola configurada, la de Microsoft
-- **Detección de arquitectura** — `[Environment]::Is64BitOperatingSystem` decide entre `OfficeClientEdition="64"` y `"32"`
-- **Configuración XML dinámica** — genera el archivo de configuración de Office en tiempo de ejecución según la versión y aplicaciones seleccionadas
-- **Excluye lo que no se pidió** — las aplicaciones no seleccionadas y los servicios incluidos (Bing, Groove, Lync, OneDrive, Teams) van como `ExcludeApp`
-- **GUI con Windows Forms** — interfaz gráfica con modo claro/oscuro (interruptor en el encabezado), tarjetas de aplicaciones con logo en el color oficial de cada app, selector de idioma con banderas dibujadas y resumen en vivo antes de instalar
-- **CLI con terminal UI** — interfaz de consola con banner tipográfico, pasos numerados y barras de progreso con bloques (`█`)
-- **Flujo guiado en ambas ediciones** — versión, idioma y aplicaciones se eligen en pantalla, paso a paso
-- **Confirmación previa** — ambas ediciones piden confirmación antes de instalar
-- **Registros de instalación** — logs en `%TEMP%\OfficeInstallerGUI_Install.log` y `%TEMP%\OfficeInstallerCLI_Install.log`
-- **Manejo de errores** — try/catch con captura de excepciones y escritura en logs
-- **Execution Policy** — soporte para `Set-ExecutionPolicy` en primera ejecución
-- **Limpieza automática** — elimina archivos temporales tras la instalación
-
----
-
-## Licencia
-
-Esta herramienta **instala** Office; no lo activa. Necesitas una licencia válida
-de Office para usarlo. La versión GUI incluye un intento opcional de activación
-con Microsoft Activation Scripts, pero la versión CLI no lo hace.
-
----
-
 ## Notas
 
 ### Cómo instalar
