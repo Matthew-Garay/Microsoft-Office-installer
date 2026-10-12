@@ -1,24 +1,24 @@
 <div align="center">
 
-# 📦 Microsoft Office Installer
+# Microsoft Office Installer
 
 **Instalador de Microsoft Office (LTSC y Professional Plus) en Windows** con un solo comando de PowerShell, con interfaz gráfica (GUI) y línea de comandos (CLI).
 
-[![PowerShell](https://img.shields.io/badge/PowerShell-5.1-5391FE?style=flat-square&logo=powershell&logoColor=white)](https://learn.microsoft.com/powershell/)
-[![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?style=flat-square&logo=windows&logoColor=white)]()
+[![PowerShell](https://img.shields.io/badge/PowerShell-5.1-5391FE?style=flat-square)](https://learn.microsoft.com/powershell/)
+[![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?style=flat-square)]()
 [![Sin dependencias](https://img.shields.io/badge/Sin%20dependencias-externas-2ea44f?style=flat-square)]()
 
 </div>
 
 ---
 
-## 📖 Descripción
+## Descripción
 
 Scripts de **PowerShell** que instalan Microsoft Office en Windows con un comando. Descarga el **Office Deployment Tool (ODT)** desde los servidores de Microsoft, arma el archivo de configuración con las opciones elegidas y ejecuta `setup.exe /configure`.
 
 Está dirigido a administradores y usuarios avanzados que necesitan desplegar Office de forma rápida y reproducible, sin instaladores manuales.
 
-## ✨ Características
+## Características
 
 - **Dos modos:** interfaz gráfica (`instalar-gui.ps1`) y consola (`instalar-cli.ps1`).
 - **Ediciones soportadas:** LTSC Professional Plus **2024** y **2021**; Professional Plus **2019**, **2016** y **2013**.
@@ -29,13 +29,13 @@ Está dirigido a administradores y usuarios avanzados que necesitan desplegar Of
 - **Tema claro/oscuro** y tarjetas con logos en la versión GUI.
 - **Sin dependencias externas** y sin tocar la licencia (no incluye activación).
 
-## 🛠️ Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - **Lenguaje:** PowerShell 5.0+
 - **Herramientas:** Office Deployment Tool (ODT) de Microsoft
 - **Plataforma:** Windows 10 / 11
 
-## 📋 Requisitos previos
+## Requisitos previos
 
 - **Windows 10 u 11**
 - **PowerShell 5.0 o superior**
@@ -43,7 +43,7 @@ Está dirigido a administradores y usuarios avanzados que necesitan desplegar Of
 - **.NET Framework 4.5 o superior**
 - **Internet** (el ODT y los archivos de Office se descargan de Microsoft)
 
-## 🚀 Instalación
+## Instalación
 
 Abre PowerShell como **administrador**. Si es la primera vez que ejecutas scripts:
 
@@ -65,11 +65,11 @@ irm https://raw.githubusercontent.com/Matthew-Garay/Microsoft-Office-installer/m
 
 También puedes descargar el `.ps1` y ejecutarlo con clic derecho → *Ejecutar con PowerShell*.
 
-## 🧪 Uso
+## Uso
 
 Ambas versiones te guían por: **versión → idioma → aplicaciones → resumen → confirmación**. Nada se instala sin tu confirmación, porque una instalación de Office no se deshace con facilidad.
 
-## 📂 Estructura del proyecto
+## Estructura del proyecto
 
 ```
 Microsoft-Office-installer/
@@ -79,16 +79,17 @@ Microsoft-Office-installer/
 └── README.md
 ```
 
-## 📝 Notas
+## Notas
 
 - Este proyecto **instala** Office, no lo activa: necesitas una licencia propia.
 - Los temporales se eliminan solos al terminar.
 - Registro de cada ejecución: `%TEMP%\OfficeInstallerGUI_Install.log` y `%TEMP%\OfficeInstallerCLI_Install.log`.
 
-## 📜 Licencia
+## Licencia
 
 Proyecto educativo y de código abierto; puedes usarlo libremente.
 
-## ✍️ Autor
+## Autor
 
 **Matthew Garay** — [GitHub](https://github.com/Matthew-Garay)
+
